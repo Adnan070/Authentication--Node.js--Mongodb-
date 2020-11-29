@@ -1,44 +1,51 @@
-// All Require Files are here... 👇👇👇👇
+// All Require Files are here...
 // =====================================
 
-var express = require('express')
-var app = require('express')();
-var cors = require('cors');
-var bodyParser = require('body-parser');
-require('./utils/admin.js');
+var app = require("express")();
+var cors = require("cors");
+var bodyParser = require("body-parser");
+const flash = require("connect-flash");
+const passport = require("passport");
+const session = require("express-session");
+require("./utils/admin.js")();
 
-// Congigurtion 👇👇👇👇
+// Congigurtion
 // ====================
 
+require("./utils/passport")(passport);
 var port = process.env.PORT || 5000;
 app.use(cors());
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded(true))
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded(true));
 
-// var corsOptions = {
-    //     origin: 'http://example.com',
-    //     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-    // }
-    
+// Express session
+app.use(
+  session({
+    secret: "Bukc AK",
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 5, // (1000 -> msec * 60 -> sec * 60 -> min * 24 -> hrs * 1 -> days)
+    },
+  })
+);
 
-// Get all Handlers here 👇👇👇👇
-// ==============================
+// Passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
 
-const { signUpUser } = require('./handlers/users.js');
+// Connect flash
+app.use(flash());
 
+// Global variables
+app.use(function (req, res, next) {
+  res.locals.success_msg = req.flash("success_msg");
+  res.locals.error_msg = req.flash("error_msg");
+  res.locals.error = req.flash("error");
+  next();
+});
 
+// Routes
+app.use("/", require("./routes/index.js"));
 
-// Call above handlers here 👇👇👇👇
-// =================================
-
-// 1. All Post Routes are here 👇👇👇👇
-// ----------------------------------
-
-app.post('/register',signUpUser);
-
-// 2. All Get Routes are here 👇👇👇👇
-// ----------------------------------
-
-
-
-app.listen(5000, () => console.log(`Tracker App Running on port ${port}!`))
+app.listen(5000, () => console.log(`Tracker App Running on port ${port}!`));

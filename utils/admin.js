@@ -1,14 +1,18 @@
-var mongoose = require('mongoose')
-const uri = "mongodb+srv://ak-development:CW4Yh7Opomvr5CSH@ak-development.gmdnp.mongodb.net/tracker?retryWrites=true&w=majority";
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => {
-  console.log("MongoDB Connected…")
-})
-.catch(err => console.log(err))
+var mongoose = require("mongoose");
 
+module.exports = async () => {
+  const uri =
+    "mongodb+srv://ak-development:CW4Yh7Opomvr5CSH@ak-development.gmdnp.mongodb.net/tracker?retryWrites=true&w=majority";
+  await mongoose
+    .connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+    .then(() => {
+      console.log("MongoDB Connected…");
+    })
+    .catch((err) => console.log(err));
+};
 
 // const client = new MongoClient(uri, { useNewUrlParser: true });
 // client.connect(err => {
